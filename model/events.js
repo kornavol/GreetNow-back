@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const eventsSchema = new mongoose.Schema(
     {   
-        /* added id from tutorial. Still not working */
+        /* Tested without id. It working. The structure comes from official tutorial */
         _id: mongoose.Schema.Types.ObjectId,
         name: String
     }

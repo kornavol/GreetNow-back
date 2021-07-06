@@ -16,8 +16,7 @@ const events = require("../model/events");
 //   };
 
 exports.getAll = (req, res) => {
-    texts.findOne({ text: "test5" }).
-        populate('events').
+    texts.findOne({ text: "test7" }).
         exec((err, docs) => {
             if (err) {
                 res.send({ status: "failed", message: err });
@@ -36,8 +35,8 @@ exports.saveText = (req, res) => {
 
                 const text = new texts({
                     _id: new mongoose.Types.ObjectId(),
-                    text: 'test5',
-                    events: [event._id]
+                    text: 'test7',
+                    events: [event.name]
                 })
                 text.save(function (err, text) {
                     if (err) return handleError(err);

@@ -4,7 +4,8 @@ const textsSchema = new mongoose.Schema(
     {
         text: String,
         events: [{
-            type: mongoose.Schema.Types.ObjectId,
+            /* The last method 'here String' suppose to be same as 'key' in referenced document   */
+            type: mongoose.Schema.Types.String,
             ref: 'events'
         },]
     }
