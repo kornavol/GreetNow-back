@@ -4,7 +4,10 @@ const hbs = require("hbs");
 
 require("dotenv").config();
 
+
+
 const connectDB = require("./config/db");
+const texts = require("./router/texts");
 
 const port = process.env.PORT || 8080;
 
@@ -17,5 +20,11 @@ let allowCrossDomain = function (req, res, next) {
     res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
     next();
 };
+
+app.use(allowCrossDomain);
+
+app.use("/", texts);
+
+
 
 app.listen(port, () => console.log(`Server started to run on ${port}`));
