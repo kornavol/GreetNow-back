@@ -1,14 +1,11 @@
 const mongoose = require("mongoose");
 
-const eventsSchema = new mongoose.Schema(
+const categoriesSchema = new mongoose.Schema(
     {   
         /* Tested without id. It working. The structure comes from official tutorial */
         _id: mongoose.Schema.Types.ObjectId,
-        name: String,
-        day:Number,
-        month:Number
-
+        name: String
     }
 )
 
-module.exports = mongoose.model("events", eventsSchema);
+module.exports = mongoose.model("categories", categoriesSchema);
