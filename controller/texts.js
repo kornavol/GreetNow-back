@@ -4,44 +4,28 @@ const mongoose = require("mongoose");
 const events = require("../model/events");
 const categories = require("../model/categories");
 
-// exports.getAll = (req, res) => {
-//     texts.find({}, (err, docs) => {
-//       if (err) {
-//         res.send({ status: "failed", message: err });
-//       } else {
-//         res.send({ status: "success", message: "All data fetched successfuly", data: docs });
-//         console.log(docs)
-//       }
-//     });
-//   };
-
 exports.getAll = (req, res) => {
-    texts.findOne({ text: "with category and events" })
+    texts.find()
         .populate('events')
         .populate('categories')
-        .exec((err, doc) => {
-            console.log(err, doc)
+        .exec((err, docs) => {
             if (err) {
-                res.send({ status: "failed", message: err });
+                res.status(500).send({ status: "failed", message: err });
             } else {
+                const respond = JSON.parse(JSON.stringify(docs));
 
-                const respond = JSON.parse(JSON.stringify(doc));
-
-                 /* convert 'events' for fromn */
+                /* convert 'events' for fromn */
                 const refArrConverter = (type) => {
-                    
-                    const newArr = respond[type].map(
-                        (event) => (event = event.name)
-                    );
-                    
-                    respond.type = newArr;
-                
-                    
+                    respond.forEach(element => {
+                        const newArr = element[type].map(
+                            (event) => (event = event.name)
+                        );
+                        element[type] = newArr;
+                    });
                 }
-                
+
                 refArrConverter('events')
                 refArrConverter('categories')
-                
 
                 res.send({
                     status: "success",
@@ -51,15 +35,6 @@ exports.getAll = (req, res) => {
             }
         });
 };
-
-
-
-
-
-
-
-
-
 
 
 exports.saveText = (req, res) => {

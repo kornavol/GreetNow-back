@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const textsSchema = new mongoose.Schema(
     {
-        num: Number,
         text: String,
         categories: [{
             type: mongoose.Schema.Types.ObjectId,
