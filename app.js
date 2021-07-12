@@ -9,6 +9,7 @@ require("dotenv").config();
 
 const connectDB = require("./config/db");
 const catalog = require("./router/catalog");
+const idToDb = require('./config/id-name')
 
 const port = process.env.PORT || 8080;
 
@@ -31,5 +32,7 @@ let allowCrossDomain = function (req, res, next) {
 app.use(allowCrossDomain);
 
 app.use("/media-catalog", catalog);
+
+idToDb.convertIds()
 
 app.listen(port, () => console.log(`Server started to run on ${port}`));

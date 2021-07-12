@@ -4,10 +4,53 @@ const mongoose = require("mongoose");
 const events = require("../model/events");
 const categories = require("../model/categories");
 
-exports.getAll = (req, res) => {
-    texts.find()
+
+
+
+
+exports.getAll = async (req, res) => {
+
+    let isFiltred = true
+
+    const page = parseInt(req.query.page)
+    const limit = parseInt(req.query.limit)
+
+    /* ! Why it can be declareted over const  */
+    let numberOfDocuments = await texts.countDocuments().exec()
+
+    const startIndex = (page - 1) * limit
+    const endIndex = page * limit
+
+    let pages = {
+        limit
+    }
+    
+    /* ! need to change logic for filtring */
+    pages.totalpages  = numberOfDocuments / limit
+
+    /* checking if prev and next pages are consist. 
+    If yes, make a recording to respond */
+    if (startIndex > 0) {
+        pages.previos = page - 1
+    }
+    
+    if (endIndex < numberOfDocuments) {
+        pages.next = page + 1
+    }
+    
+    
+    let abc = texts.find({events: {_id : "60e6e118bd1a790fa83201d8"}})
+    
+    if (!isFiltred) {
+        abc = texts.find()  
+    }
+    
+    abc
+        // .populate('events', null, {name: 'Christmas'})
         .populate('events')
         .populate('categories')
+        .limit(limit)
+        .skip(startIndex)
         .exec((err, docs) => {
             if (err) {
                 res.status(500).send({ status: "failed", message: err });
@@ -30,7 +73,7 @@ exports.getAll = (req, res) => {
                 res.send({
                     status: "success",
                     message: "All data fetched successfuly",
-                    data: respond,
+                    data: { pages: pages, texts: respond },
                 });
             }
         });
