@@ -1,9 +1,8 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const hbs = require("hbs");
 
-require("dotenv").config();
+require('dotenv').config({path:'./config.env'});
 
 
 
@@ -32,7 +31,10 @@ let allowCrossDomain = function (req, res, next) {
 app.use(allowCrossDomain);
 
 app.use("/media-catalog", catalog);
+app.use('/auth', require('./router/auth'));
+app.use('/private', require('./router/private'));
 
-idToDb.convertIds()
+/* Andreas things */
+// idToDb.convertIds()
 
 app.listen(port, () => console.log(`Server started to run on ${port}`));
