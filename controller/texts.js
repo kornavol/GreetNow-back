@@ -11,47 +11,62 @@ exports.getAll = async (req, res) => {
     const limit = parseInt(req.query.limit)
     const eventId = req.query.event;
     const categoryId = req.query.category
-
-    /* Cheking if we have requst with filters */
-    let isFiltred = true
-    
-    if (!eventId && !categoryId  ) {
-        isFiltred = false
-    }
-
-    console.log(isFiltred)
-
-    
+    const isFiltred = req.query.isFiltred
 
     /* ! Why it can be declareted over const  */
-    let numberOfDocuments = await texts.countDocuments().exec()
+    let numOfDocs
 
+    
+    /* Compute aditional information */
     const startIndex = (page - 1) * limit
     const endIndex = page * limit
 
     let pages = {
         limit
     }
-    
-    /* ! need to change logic for filtring */
-    pages.totalpages  = numberOfDocuments / limit
 
-    /* checking if prev and next pages are consist. 
+    /* Interdependence between query and input data
+        Don't like this structure. Needs review
+    */
+
+    let find
+
+    if (eventId && categoryId) {
+        const pass = { events: { _id: eventId }, categories: { _id: categoryId } }
+        find = texts.find(pass)
+        numOfDocs = await texts.countDocuments(pass).exec()
+        console.log('create logic');
+        console.log('numOfDocs', numOfDocs);
+
+    } else if (eventId && !categoryId) {
+        const pass = { events: { _id: eventId } }
+        find = texts.find(pass)
+        console.log('event');
+        numOfDocs = await texts.countDocuments(pass).exec()
+    } else if (!eventId && categoryId) {
+        const pass = { categories: { _id: categoryId } }
+        find = texts.find(pass)
+        console.log('category');
+        numOfDocs = await texts.countDocuments(pass).exec()
+    }
+
+    if (!isFiltred) {
+        find = texts.find()
+    }
+
+        /* checking if prev and next pages are consist. 
     If yes, make a recording to respond */
     if (startIndex > 0) {
         pages.previos = page - 1
     }
-    
-    if (endIndex < numberOfDocuments) {
+
+    if (endIndex < numOfDocs) {
         pages.next = page + 1
     }
-    
-    let find = texts.find({events: {_id : eventId}})
-    
-    if (!isFiltred) {
-        find = texts.find()  
-    }
-    
+
+    /* ! need to change logic for filtring */
+    pages.totalpages = numOfDocs / limit
+
     find
         .populate('events')
         .populate('categories')
@@ -83,6 +98,10 @@ exports.getAll = async (req, res) => {
                 });
             }
         });
+
+        
+
+
 };
 
 

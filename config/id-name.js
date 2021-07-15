@@ -24,19 +24,9 @@ exports.convertIds = async (db, name) => {
     let conformity = {}
 
     tempRes.forEach(event => {
-        // const element = {}
-        // element[event._id] = event.name
-
         conformity[event._id] = event.name
-
-        // conformity.push(element)
     });
 
-    // console.log('conformity', conformity);
-
     return conformity
-
-    
-
 }
 
