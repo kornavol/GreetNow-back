@@ -5,15 +5,23 @@ const events = require("../model/events");
 const categories = require("../model/categories");
 
 
-
-
-
 exports.getAll = async (req, res) => {
-
-    let isFiltred = true
 
     const page = parseInt(req.query.page)
     const limit = parseInt(req.query.limit)
+    const eventId = req.query.event;
+    const categoryId = req.query.category
+
+    /* Cheking if we have requst with filters */
+    let isFiltred = true
+    
+    if (!eventId && !categoryId  ) {
+        isFiltred = false
+    }
+
+    console.log(isFiltred)
+
+    
 
     /* ! Why it can be declareted over const  */
     let numberOfDocuments = await texts.countDocuments().exec()
@@ -38,15 +46,13 @@ exports.getAll = async (req, res) => {
         pages.next = page + 1
     }
     
-    
-    let abc = texts.find({events: {_id : "60e6e118bd1a790fa83201d8"}})
+    let find = texts.find({events: {_id : eventId}})
     
     if (!isFiltred) {
-        abc = texts.find()  
+        find = texts.find()  
     }
     
-    abc
-        // .populate('events', null, {name: 'Christmas'})
+    find
         .populate('events')
         .populate('categories')
         .limit(limit)
