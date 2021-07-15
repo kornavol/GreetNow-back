@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const events = require("../model/events");
 const categories = require("../model/categories");
 
-
 exports.getAll = async (req, res) => {
 
     const page = parseInt(req.query.page)
@@ -16,7 +15,6 @@ exports.getAll = async (req, res) => {
     /* ! Why it can be declareted over const  */
     let numOfDocs
 
-    
     /* Compute aditional information */
     const startIndex = (page - 1) * limit
     const endIndex = page * limit
@@ -54,7 +52,7 @@ exports.getAll = async (req, res) => {
         find = texts.find()
     }
 
-        /* checking if prev and next pages are consist. 
+    /* checking if prev and next pages are consist. 
     If yes, make a recording to respond */
     if (startIndex > 0) {
         pages.previos = page - 1
@@ -66,6 +64,11 @@ exports.getAll = async (req, res) => {
 
     /* ! need to change logic for filtring */
     pages.totalpages = numOfDocs / limit
+    pages.numOfDocs = numOfDocs
+
+    if (pages.totalpages < 1) {
+        pages.totalpages = 1
+    }
 
     find
         .populate('events')
@@ -76,9 +79,9 @@ exports.getAll = async (req, res) => {
             if (err) {
                 res.status(500).send({ status: "failed", message: err });
             } else {
+                /* converting 'ref' obj  to symple array */
                 const respond = JSON.parse(JSON.stringify(docs));
 
-                /* convert 'events' for fromn */
                 const refArrConverter = (type) => {
                     respond.forEach(element => {
                         const newArr = element[type].map(
@@ -98,13 +101,9 @@ exports.getAll = async (req, res) => {
                 });
             }
         });
-
-        
-
-
 };
 
-
+/* this function does'n use. Here only as example */
 exports.saveText = (req, res) => {
     events.findOne({ name: "Christmas" }).exec((err, event) => {
         if (err) {

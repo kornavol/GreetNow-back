@@ -30,31 +30,17 @@ let allowCrossDomain = function (req, res, next) {
     next();
 };
 
-
-/* Andreas things */
 /* !Q: 
     1. Ask Buelent about  situation, with promise 
     2. Ask about my initial idea. Get conformity table once and send it to 
     midleware. */
-
-
 idToDb.convertIds('events').then(respond => app.locals.eventsLookupTab = respond)
 idToDb.convertIds('categories').then(respond => app.locals.categoriesLookupTab = respond)
-
-// setTimeout(() => {
-//     console.log(a)
-//     console.log(b)
-        
-// }, 3000);
-
-
 
 app.use(allowCrossDomain);
 
 app.use("/media-catalog", catalog);
 app.use('/auth', require('./router/auth'));
 app.use('/private', require('./router/private'));
-
-
 
 app.listen(port, () => console.log(`Server started to run on ${port}`));
