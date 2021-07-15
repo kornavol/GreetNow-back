@@ -28,6 +28,7 @@ exports.convertIds = (req, res, next) => {
             if (name == input) {
                 let result = id;
                 req.query[collection] = result;
+                break
             }
         }
     }
