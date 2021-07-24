@@ -12,7 +12,7 @@ exports.getAll = async (req, res) => {
     const isFiltred = req.query.isFiltred;
 
     /* ! Why it can be declareted over const  */
-    let numOfDocs;
+    let numOfDocs = await texts.countDocuments().exec();;
 
     /* Compute aditional information */
     const startIndex = (page - 1) * limit;
@@ -23,7 +23,7 @@ exports.getAll = async (req, res) => {
     };
 
     /* Interdependence between query and input data
-          Don't like this structure. Needs review
+        Don't like this structure. Needs review
       */
 
     let find;
@@ -38,11 +38,13 @@ exports.getAll = async (req, res) => {
         find = texts.find(pass);
         numOfDocs = await texts.countDocuments(pass).exec();
         // console.log('event');
+        // console.log(eventId)
     } else if (!eventId && categoryId) {
+        // console.log("category");
+        // console.log(categoryId)
         const pass = { categories: { _id: categoryId } };
         find = texts.find(pass);
         numOfDocs = await texts.countDocuments(pass).exec();
-        // console.log("category");
     }
 
     if (!isFiltred) {
@@ -60,12 +62,10 @@ exports.getAll = async (req, res) => {
     }
 
     /* ! need to change logic for filtring */
-    pages.totalPages = numOfDocs / limit;
+    /* round up to big value */
+    pages.totalPages =  Number((numOfDocs / limit).toFixed())
+    console.log(pages.totalPages);
     pages.totalDocs = numOfDocs;
-
-    if (pages.totalPages < 1) {
-        pages.totalPages = 1;
-    }
 
     find
         .populate("events")

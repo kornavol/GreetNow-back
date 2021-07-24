@@ -18,3 +18,4 @@
 
 - Ask about why it id-name return promise
 - Review mediaCatalog logic especially "find" part (in text.js)
+- Postman (request). Why I need to use "&" for close request (have a screenshot)

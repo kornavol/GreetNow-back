@@ -4,6 +4,8 @@ exports.convertIds = (req, res, next) => {
     const event = req.query.event;
     const category = req.query.category;
 
+    // console.log(category);
+
     if (event || category) {
         isFiltred = true;
     }
@@ -22,10 +24,16 @@ exports.convertIds = (req, res, next) => {
             input = event;
         }
 
+        
+
         for (const id in lookUpTab) {
             const name = lookUpTab[id];
 
+            
+
             if (name == input) {
+                // console.log('name:',name);
+                // console.log('input:',input);
                 let result = id;
                 req.query[collection] = result;
                 break
