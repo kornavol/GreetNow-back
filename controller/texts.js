@@ -62,9 +62,8 @@ exports.getAll = async (req, res) => {
     }
 
     /* ! need to change logic for filtring */
-    /* round up to big value */
-    pages.totalPages =  Number((numOfDocs / limit).toFixed())
-    console.log(pages.totalPages);
+    /* Math.ceil will always round up to the next highest integer */
+    pages.totalPages =  Math.ceil(numOfDocs / limit)
     pages.totalDocs = numOfDocs;
 
     find
