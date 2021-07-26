@@ -8,7 +8,7 @@ exports.getAll = async (req, res) => {
     const isFiltred = req.query.isFiltred;
 
     /* ! Why it can be declareted over const  */
-    let numOfDocs;
+    let numOfDocs = await pictures.countDocuments().exec();;
 
     /* Compute aditional information */
     const startIndex = (page - 1) * limit;
@@ -56,12 +56,8 @@ exports.getAll = async (req, res) => {
     }
 
     /* ! need to change logic for filtring */
-    pages.totalPages = numOfDocs / limit;
+    pages.totalPages =  Math.ceil(numOfDocs / limit)
     pages.totalDocs = numOfDocs;
-
-    if (pages.totalPages < 1) {
-        pages.totalPages = 1;
-    }
 
     find
         .populate("events")

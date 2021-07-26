@@ -24,12 +24,8 @@ exports.convertIds = (req, res, next) => {
             input = event;
         }
 
-        
-
         for (const id in lookUpTab) {
             const name = lookUpTab[id];
-
-            
 
             if (name == input) {
                 // console.log('name:',name);
