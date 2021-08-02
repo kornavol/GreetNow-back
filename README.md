@@ -8,14 +8,14 @@
 
 ### Mongo
 
-- process, how to save and get document with the reference to new collection.
+- Done. How to save and get document with the reference to new collection.
 
 ## Issues
 
-- Some holydays have a floating day. In DB, date of this event is for the 2021 year
+- BQ. Some holydays have a floating day. In DB, date of this event is for the 2021 year
 
 ## Questions
 
-- Ask about why it id-name return promise
 - Review mediaCatalog logic especially "find" part (in text.js)
-- Postman (request). Why I need to use "&" for close request (have a screenshot)
+- There is a possibility to send parameters in GET request as separate data bench 
+- Done. BQ.Postman (request). Why I need to use "&" for close request (have a screenshot)

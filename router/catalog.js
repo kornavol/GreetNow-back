@@ -4,9 +4,7 @@ const picturesControl = require('../controller/pictures')
 const {convertIds} = require('../middleware/namesToId')
 
 router.get("/getTexts", convertIds, textsControl.getAll);
-// router.get("/getTexts",   textsControl.getAll);
-router.get("/save",  textsControl.saveText);
-
+// router.get("/save",  textsControl.saveText);
 router.get("/getPictures",  convertIds, picturesControl.getAll);
 
 module.exports = router;

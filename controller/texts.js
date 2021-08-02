@@ -2,7 +2,6 @@ const texts = require("../model/texts");
 const mongoose = require("mongoose");
 
 const events = require("../model/events");
-const categories = require("../model/categories");
 
 exports.getAll = async (req, res) => {
     const page = parseInt(req.query.page);

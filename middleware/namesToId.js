@@ -4,8 +4,6 @@ exports.convertIds = (req, res, next) => {
     const event = req.query.event;
     const category = req.query.category;
 
-    // console.log(category);
-
     if (event || category) {
         isFiltred = true;
     }
