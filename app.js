@@ -2,9 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 
-require('dotenv').config({path:'./config.env'});
-
-
+require('dotenv').config({path : './config.env'});
 
 const connectDB = require("./config/db");
 const catalog = require("./router/catalog");
@@ -22,11 +20,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
 /* CrossDomain setup */
-let allowCrossDomain = function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "*");
-    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
-    next();
+let allowCrossDomain = function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "*");
+  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+  next();
 };
 
 app.use(allowCrossDomain);
@@ -35,7 +33,7 @@ app.use("/media-catalog", catalog);
 app.use('/auth', require('./router/auth'));
 app.use('/private', require('./router/private'));
 
-//error handler should be last piece of middleware
+// error handler should be last piece of middleware
 app.use(errorHandler);
 
 /* Andreas things */

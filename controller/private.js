@@ -2,16 +2,11 @@ const User = require('../model/User');
 const jwt = require('jsonwebtoken');
 
 exports.getPrivateData = async (req, res, next) => {
+  let token = req.headers.authorization.split(" ")[1];
 
-    let token = req.headers.authorization.split(" ")[1];
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const user = await User.findById(decoded.id);
+  const username = user.firstName;
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id);
-    const username = user.firstName;
-
-    res.status(200).json({
-        success: true,
-        data: username,
-        id: user
-    });
+  res.status(200).json({success : true, data : username, id : user});
 }
