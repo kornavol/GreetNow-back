@@ -8,7 +8,8 @@ require('dotenv').config({path:'./config.env'});
 
 const connectDB = require("./config/db");
 const catalog = require("./router/catalog");
-const idToDb = require('./config/id-name')
+const idToDb = require('./config/id-name');
+const errorHandler = require('./middleware/error');
 
 const port = process.env.PORT || 8080;
 
@@ -33,6 +34,9 @@ app.use(allowCrossDomain);
 app.use("/media-catalog", catalog);
 app.use('/auth', require('./router/auth'));
 app.use('/private', require('./router/private'));
+
+//error handler should be last piece of middleware
+app.use(errorHandler);
 
 /* Andreas things */
 // idToDb.convertIds()
