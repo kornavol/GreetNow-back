@@ -1,3 +1,5 @@
 # http://localhost:8080/media-catalog/getTexts
 
-http://localhost:8080/media-catalog/getPictures
+# http://localhost:8080/media-catalog/getPictures
+
+http://localhost:8080/media-catalog/getTexts

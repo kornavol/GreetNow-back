@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 
-require('dotenv').config({path:'./config.env'});
+require('dotenv').config({ path: './config.env' });
 
 
 
@@ -10,6 +10,8 @@ const connectDB = require("./config/db");
 const catalog = require("./router/catalog");
 const idToDb = require('./config/id-name');
 const errorHandler = require('./middleware/error');
+
+// const test1 = require('./middleware/conformity') 
 
 const port = process.env.PORT || 8080;
 
@@ -29,11 +31,19 @@ let allowCrossDomain = function (req, res, next) {
     next();
 };
 
+/* !Q: 
+    1. Ask Buelent about  situation, with promise 
+    2. Ask about my initial idea. Get conformity table once and send it to 
+    midleware. */
+idToDb.convertIds('events').then(respond => app.locals.eventsLookupTab = respond)
+idToDb.convertIds('categories').then(respond => app.locals.categoriesLookupTab = respond)
+
 app.use(allowCrossDomain);
 
 app.use("/media-catalog", catalog);
 app.use('/auth', require('./router/auth'));
 app.use('/private', require('./router/private'));
+
 
 //error handler should be last piece of middleware
 app.use(errorHandler);

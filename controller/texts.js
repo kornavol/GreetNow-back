@@ -2,73 +2,90 @@ const texts = require("../model/texts");
 const mongoose = require("mongoose");
 
 const events = require("../model/events");
-const categories = require("../model/categories");
-
-
-
-
 
 exports.getAll = async (req, res) => {
-
-    let isFiltred = true
-
-    const page = parseInt(req.query.page)
-    const limit = parseInt(req.query.limit)
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const eventId = req.query.event;
+    const categoryId = req.query.category;
+    const isFiltred = req.query.isFiltred;
 
     /* ! Why it can be declareted over const  */
-    let numberOfDocuments = await texts.countDocuments().exec()
+    let numOfDocs = await texts.countDocuments().exec();;
 
-    const startIndex = (page - 1) * limit
-    const endIndex = page * limit
+    /* Compute aditional information */
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
 
     let pages = {
-        limit
+        limit,
+    };
+
+    /* Interdependence between query and input data
+        Don't like this structure. Needs review
+      */
+
+    let find;
+
+    if (eventId && categoryId) {
+        const pass = { events: { _id: eventId }, categories: { _id: categoryId } };
+        find = texts.find(pass);
+        numOfDocs = await texts.countDocuments(pass).exec();
+        // console.log('both');
+    } else if (eventId && !categoryId) {
+        const pass = { events: { _id: eventId } };
+        find = texts.find(pass);
+        numOfDocs = await texts.countDocuments(pass).exec();
+        // console.log('event');
+        // console.log(eventId)
+    } else if (!eventId && categoryId) {
+        // console.log("category");
+        // console.log(categoryId)
+        const pass = { categories: { _id: categoryId } };
+        find = texts.find(pass);
+        numOfDocs = await texts.countDocuments(pass).exec();
     }
-    
-    /* ! need to change logic for filtring */
-    pages.totalpages  = numberOfDocuments / limit
+
+    if (!isFiltred) {
+        find = texts.find();
+    }
 
     /* checking if prev and next pages are consist. 
-    If yes, make a recording to respond */
+      If yes, make a recording to respond */
     if (startIndex > 0) {
-        pages.previos = page - 1
+        pages.previos = page - 1;
     }
-    
-    if (endIndex < numberOfDocuments) {
-        pages.next = page + 1
+
+    if (endIndex < numOfDocs) {
+        pages.next = page + 1;
     }
-    
-    
-    let abc = texts.find({events: {_id : "60e6e118bd1a790fa83201d8"}})
-    
-    if (!isFiltred) {
-        abc = texts.find()  
-    }
-    
-    abc
-        // .populate('events', null, {name: 'Christmas'})
-        .populate('events')
-        .populate('categories')
+
+    /* ! need to change logic for filtring */
+    /* Math.ceil will always round up to the next highest integer */
+    pages.totalPages =  Math.ceil(numOfDocs / limit)
+    pages.totalDocs = numOfDocs;
+
+    find
+        .populate("events")
+        .populate("categories")
         .limit(limit)
         .skip(startIndex)
         .exec((err, docs) => {
             if (err) {
                 res.status(500).send({ status: "failed", message: err });
             } else {
+                /* converting 'ref' obj  to symple array */
                 const respond = JSON.parse(JSON.stringify(docs));
 
-                /* convert 'events' for fromn */
                 const refArrConverter = (type) => {
-                    respond.forEach(element => {
-                        const newArr = element[type].map(
-                            (event) => (event = event.name)
-                        );
+                    respond.forEach((element) => {
+                        const newArr = element[type].map((event) => (event = event.name));
                         element[type] = newArr;
                     });
-                }
+                };
 
-                refArrConverter('events')
-                refArrConverter('categories')
+                refArrConverter("events");
+                refArrConverter("categories");
 
                 res.send({
                     status: "success",
@@ -79,7 +96,7 @@ exports.getAll = async (req, res) => {
         });
 };
 
-
+/* this function does'n use. Here only as example */
 exports.saveText = (req, res) => {
     events.findOne({ name: "Christmas" }).exec((err, event) => {
         if (err) {

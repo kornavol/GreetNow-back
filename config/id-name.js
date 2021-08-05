@@ -1,35 +1,32 @@
-const mongoose = require('mongoose')
 const mongoEvents = require("../model/events");
 const mongoCategories = require("../model/categories");
-const chalk = require('chalk')
 
-exports.convertIds = async () => {
+exports.convertIds = async (db, name) => {
 
-    // let sorce;
+    let sorce;
 
-    // switch (db) {
-    //     case events:
-    //         sorce = mongoEvents
-    //         break;
-    //     case categories:
-    //         sorce = mongoCategories
-    //         break;
+    switch (db) {
+        case 'events':
+            sorce = mongoEvents
+            break;
+        case 'categories':
+            sorce = mongoCategories
+            break;
 
-    //     default:
-    //         break;
-    // }
+        default:
+            sorce = null
+            break;
+    }
+    
+    /* !To-do: Protected code for wrong db  */
+    const tempRes = await sorce.find().exec()
 
-    let events = []
-    const newEvents = await mongoEvents.find().exec()
+    let conformity = {}
 
-    newEvents.forEach(event => {
-        const conformity = {}
+    tempRes.forEach(event => {
         conformity[event._id] = event.name
-
-        events.push(conformity)
     });
 
-    console.log('test', events);
-
+    return conformity
 }
 
