@@ -6,15 +6,20 @@ const sendEmail = require('../utils/sendEmail');
 exports.register = async (req, res, next) => {
     //res.send('Register Route'); --> this was created at the beginning to test the server with postman
     //async was added after the test
-    const {username, email, password} = req.body;
+    const {firstName, lastName, email, password} = req.body;
 
     try {
         const user = await User.create({
-            username,
+            firstName,
+            lastName,
             email,
             password
         });
-        sendToken(user, 201, res);
+
+        res.status(201).json({
+            success: true
+        });
+        /* sendToken(user, 201, res); */
     } catch (error) {
         next(error);
     }
@@ -33,14 +38,14 @@ exports.login = async (req, res, next) => {
 
         if(!user){
             //401 unauthorized
-            return next(new ErrorResponse('Invalid credentials', 401));
+            return next(new ErrorResponse('Invalid credentials, username or password is not correct', 401));
         }
 
         const isMatch = await user.matchPasswords(password);
 
         if(!isMatch){
             //401 unauthorized
-            return next(new ErrorResponse('Invalid credentials', 401));
+            return next(new ErrorResponse('Invalid credentials, username or password is not correct', 401));
         }
 
         sendToken(user, 200, res);
@@ -128,5 +133,5 @@ exports.resetPassword = async (req, res, next) => {
 
 const sendToken = (user, statusCode, res) => {
     const token = user.getSignedToken();
-    res.status(statusCode).json({success: true, token})
+    res.status(statusCode).json({message:'you are logged in', success: true, token})
 }
