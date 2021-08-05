@@ -5,4 +5,14 @@ class ErrorResponse extends Error {
     }
 }
 
+function test() {
+    throw new ErrorResponse("Whoops!");
+}
+
+try {
+    test();
+} catch(err) {
+    console.log(err.message); // Whoops!
+}
+
 module.exports = ErrorResponse;
