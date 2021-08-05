@@ -5,25 +5,26 @@ exports.convertIds = async (db, name) => {
   let sorce;
 
   switch (db) {
-  case 'events':
-    sorce = mongoEvents
-    break;
-  case 'categories':
-    sorce = mongoCategories
-    break;
+    case "events":
+      sorce = mongoEvents;
+      break;
+    case "categories":
+      sorce = mongoCategories;
+      break;
 
-  default:
-    sorce = null
-    break;
+    default:
+      sorce = null;
+      break;
   }
 
   /* !To-do: Protected code for wrong db  */
-  const tempRes = await sorce.find().exec()
+  const tempRes = await sorce.find().exec();
 
-  let conformity = {}
+  let conformity = {};
 
-                   tempRes.forEach(
-                       event => {conformity[event._id] = event.name});
+  tempRes.forEach((event) => {
+    conformity[event._id] = event.name;
+  });
 
-  return conformity
-}
+  return conformity;
+};

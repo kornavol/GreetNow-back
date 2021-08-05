@@ -30,7 +30,7 @@ exports.convertIds = (req, res, next) => {
         // console.log('input:',input);
         let result = id;
         req.query[collection] = result;
-        break
+        break;
       }
     }
   }

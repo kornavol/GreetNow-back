@@ -9,8 +9,6 @@ exports.getAll = async (req, res) => {
 
   /* ! Why it can be declareted over const  */
   let numOfDocs = await pictures.countDocuments().exec();
-  ;
-
   /* Compute aditional information */
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
@@ -26,17 +24,17 @@ exports.getAll = async (req, res) => {
   let find;
 
   if (eventId && categoryId) {
-    const pass = {events : {_id : eventId}, categories : {_id : categoryId}};
+    const pass = { events: { _id: eventId }, categories: { _id: categoryId } };
     find = pictures.find(pass);
     numOfDocs = await pictures.countDocuments(pass).exec();
     // console.log('both');
   } else if (eventId && !categoryId) {
-    const pass = {events : {_id : eventId}};
+    const pass = { events: { _id: eventId } };
     find = pictures.find(pass);
     numOfDocs = await pictures.countDocuments(pass).exec();
     // console.log('event');
   } else if (!eventId && categoryId) {
-    const pass = {categories : {_id : categoryId}};
+    const pass = { categories: { _id: categoryId } };
     find = pictures.find(pass);
     numOfDocs = await pictures.countDocuments(pass).exec();
     // console.log("category");
@@ -57,35 +55,36 @@ exports.getAll = async (req, res) => {
   }
 
   /* ! need to change logic for filtring */
-  pages.totalPages = Math.ceil(numOfDocs / limit)
+  pages.totalPages = Math.ceil(numOfDocs / limit);
   pages.totalDocs = numOfDocs;
 
-  find.populate("events")
-      .populate("categories")
-      .limit(limit)
-      .skip(startIndex)
-      .exec((err, docs) => {
-        if (err) {
-          res.status(500).send({status : "failed", message : err});
-        } else {
-          /* converting 'ref' obj  to symple array */
-          const respond = JSON.parse(JSON.stringify(docs));
+  find
+    .populate("events")
+    .populate("categories")
+    .limit(limit)
+    .skip(startIndex)
+    .exec((err, docs) => {
+      if (err) {
+        res.status(500).send({ status: "failed", message: err });
+      } else {
+        /* converting 'ref' obj  to symple array */
+        const respond = JSON.parse(JSON.stringify(docs));
 
-          const refArrConverter = (type) => {
-            respond.forEach((element) => {
-              const newArr = element[type].map((event) => (event = event.name));
-              element[type] = newArr;
-            });
-          };
-
-          refArrConverter("events");
-          refArrConverter("categories");
-
-          res.send({
-            status : "success",
-            message : "All data fetched successfuly",
-            data : {pages : pages, pictures : respond},
+        const refArrConverter = (type) => {
+          respond.forEach((element) => {
+            const newArr = element[type].map((event) => (event = event.name));
+            element[type] = newArr;
           });
-        }
-      });
+        };
+
+        refArrConverter("events");
+        refArrConverter("categories");
+
+        res.send({
+          status: "success",
+          message: "All data fetched successfuly",
+          data: { pages: pages, pictures: respond },
+        });
+      }
+    });
 };

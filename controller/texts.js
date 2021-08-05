@@ -12,8 +12,6 @@ exports.getAll = async (req, res) => {
 
   /* ! Why it can be declareted over const  */
   let numOfDocs = await texts.countDocuments().exec();
-  ;
-
   /* Compute aditional information */
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
@@ -29,12 +27,12 @@ exports.getAll = async (req, res) => {
   let find;
 
   if (eventId && categoryId) {
-    const pass = {events : {_id : eventId}, categories : {_id : categoryId}};
+    const pass = { events: { _id: eventId }, categories: { _id: categoryId } };
     find = texts.find(pass);
     numOfDocs = await texts.countDocuments(pass).exec();
     // console.log('both');
   } else if (eventId && !categoryId) {
-    const pass = {events : {_id : eventId}};
+    const pass = { events: { _id: eventId } };
     find = texts.find(pass);
     numOfDocs = await texts.countDocuments(pass).exec();
     // console.log('event');
@@ -42,7 +40,7 @@ exports.getAll = async (req, res) => {
   } else if (!eventId && categoryId) {
     // console.log("category");
     // console.log(categoryId)
-    const pass = {categories : {_id : categoryId}};
+    const pass = { categories: { _id: categoryId } };
     find = texts.find(pass);
     numOfDocs = await texts.countDocuments(pass).exec();
   }
@@ -63,57 +61,57 @@ exports.getAll = async (req, res) => {
 
   /* ! need to change logic for filtring */
   /* Math.ceil will always round up to the next highest integer */
-  pages.totalPages = Math.ceil(numOfDocs / limit)
+  pages.totalPages = Math.ceil(numOfDocs / limit);
   pages.totalDocs = numOfDocs;
 
-  find.populate("events")
-      .populate("categories")
-      .limit(limit)
-      .skip(startIndex)
-      .exec((err, docs) => {
-        if (err) {
-          res.status(500).send({status : "failed", message : err});
-        } else {
-          /* converting 'ref' obj  to symple array */
-          const respond = JSON.parse(JSON.stringify(docs));
+  find
+    .populate("events")
+    .populate("categories")
+    .limit(limit)
+    .skip(startIndex)
+    .exec((err, docs) => {
+      if (err) {
+        res.status(500).send({ status: "failed", message: err });
+      } else {
+        /* converting 'ref' obj  to symple array */
+        const respond = JSON.parse(JSON.stringify(docs));
 
-          const refArrConverter = (type) => {
-            respond.forEach((element) => {
-              const newArr = element[type].map((event) => (event = event.name));
-              element[type] = newArr;
-            });
-          };
-
-          refArrConverter("events");
-          refArrConverter("categories");
-
-          res.send({
-            status : "success",
-            message : "All data fetched successfuly",
-            data : {pages : pages, texts : respond},
+        const refArrConverter = (type) => {
+          respond.forEach((element) => {
+            const newArr = element[type].map((event) => (event = event.name));
+            element[type] = newArr;
           });
-        }
-      });
+        };
+
+        refArrConverter("events");
+        refArrConverter("categories");
+
+        res.send({
+          status: "success",
+          message: "All data fetched successfuly",
+          data: { pages: pages, texts: respond },
+        });
+      }
+    });
 };
 
 /* this function does'n use. Here only as example */
 exports.saveText = (req, res) => {
-  events.findOne({name : "Christmas"}).exec((err, event) => {
+  events.findOne({ name: "Christmas" }).exec((err, event) => {
     if (err) {
-      res.send({status : "failed", message : err});
+      res.send({ status: "failed", message: err });
     } else {
       const text = new texts({
-        _id : new mongoose.Types.ObjectId(),
-        text : "test7",
-        events : [ event._id ],
+        _id: new mongoose.Types.ObjectId(),
+        text: "test7",
+        events: [event._id],
       });
-      text.save(function(err, text) {
-        if (err)
-          return handleError(err);
+      text.save(function (err, text) {
+        if (err) return handleError(err);
         res.send({
-          status : "success",
-          message : "All data fetched successfuly",
-          data : text,
+          status: "success",
+          message: "All data fetched successfuly",
+          data: text,
         });
       });
     }
