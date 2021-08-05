@@ -5,7 +5,9 @@ class ErrorResponse extends Error {
   }
 }
 
-function test() { throw new ErrorResponse("Whoops!"); }
+function test() {
+  throw new ErrorResponse("Whoops!");
+}
 
 try {
   test();
