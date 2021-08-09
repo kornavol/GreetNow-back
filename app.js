@@ -4,11 +4,12 @@ const path = require("path");
 
 require('dotenv').config({ path: './config.env' });
 
-
-
-const connectDB = require("./config/db");
-const catalog = require("./router/catalog");
 const idToDb = require('./config/id-name');
+const connectDB = require("./config/db");
+
+const catalog = require("./router/catalog");
+const cards = require('./router/cards')
+
 const errorHandler = require('./middleware/error');
 
 // const test1 = require('./middleware/conformity') 
@@ -43,6 +44,7 @@ app.use(allowCrossDomain);
 app.use("/media-catalog", catalog);
 app.use('/auth', require('./router/auth'));
 app.use('/private', require('./router/private'));
+app.use('/cards', cards);
 
 
 //error handler should be last piece of middleware

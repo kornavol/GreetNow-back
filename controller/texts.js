@@ -1,5 +1,6 @@
-const texts = require("../model/texts");
 const mongoose = require("mongoose");
+
+const texts = require("../model/texts");
 
 const events = require("../model/events");
 
