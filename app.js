@@ -9,6 +9,7 @@ const connectDB = require("./config/db");
 
 const catalog = require("./router/catalog");
 const cards = require("./router/cards");
+const data = require('./router/initialData')
 
 const errorHandler = require("./middleware/error");
 
@@ -49,6 +50,7 @@ app.use("/media-catalog", catalog);
 app.use("/auth", require("./router/auth"));
 app.use("/private", require("./router/private"));
 app.use("/cards", cards);
+app.use("/data", data);
 
 // error handler should be last piece of middleware
 app.use(errorHandler);
