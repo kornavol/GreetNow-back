@@ -14,3 +14,17 @@ exports.events = async (req, res) => {
         data:eventsList
     })
 }
+
+exports.categories = async (req, res) => {
+    const categoriesDB = await mongoCategories.find().exec()
+
+    const categoriesList = categoriesDB.map((category) => {
+        const name = category.name
+        return name
+    })
+
+    res.send({
+        status:'success',
+        data:categoriesList
+    })
+}
