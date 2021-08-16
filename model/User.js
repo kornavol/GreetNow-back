@@ -5,6 +5,16 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+const recipientShema = new mongoose.Schema({
+    firstName: String,
+    lastName: String,
+    dateOfBbirth: String,
+    gender: String,
+    relationships: Array,
+    events: Array,
+    // timestamps:true
+})
+
 const UserSchema = new mongoose.Schema({
     firstName: {
         type: String,
@@ -31,6 +41,7 @@ const UserSchema = new mongoose.Schema({
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
+    recipients:[recipientShema]
 });
 
 //this checks if the password is not modified it will not rehashed

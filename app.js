@@ -51,6 +51,7 @@ app.use("/auth", require("./router/auth"));
 app.use("/private", require("./router/private"));
 app.use("/cards", cards);
 app.use("/data", data);
+app.use("/recipients", require("./router/recipients") )
 
 // error handler should be last piece of middleware
 app.use(errorHandler);
