@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 
-require("dotenv").config({ path: "./config.env" });
+require("dotenv").config({path : "./config.env"});
 
 const idToDb = require("./config/id-name");
 const connectDB = require("./config/db");
@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
 /* CrossDomain setup */
-let allowCrossDomain = function (req, res, next) {
+let allowCrossDomain = function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "*");
   res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
@@ -37,12 +37,10 @@ let allowCrossDomain = function (req, res, next) {
     1. Ask Buelent about  situation, with promise
     2. Ask about my initial idea. Get conformity table once and send it to
     midleware. */
-idToDb
-  .convertIds("events")
-  .then((respond) => (app.locals.eventsLookupTab = respond));
-idToDb
-  .convertIds("categories")
-  .then((respond) => (app.locals.categoriesLookupTab = respond));
+idToDb.convertIds("events").then((respond) =>
+                                     (app.locals.eventsLookupTab = respond));
+idToDb.convertIds("categories")
+    .then((respond) => (app.locals.categoriesLookupTab = respond));
 
 app.use(allowCrossDomain);
 
