@@ -12,7 +12,9 @@ const recipientShema = new mongoose.Schema({
     gender: String,
     relationships: Array,
     events: Array,
-    // timestamps:true
+},
+{
+    timestamps: true
 })
 
 const UserSchema = new mongoose.Schema({
@@ -35,18 +37,21 @@ const UserSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: [ true, 'Please add a password'],
+        required: [true, 'Please add a password'],
         minlength: 6,
         select: false
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
-    recipients:[recipientShema]
-});
+    recipients: [recipientShema],
+},
+    {
+        timestamps: true
+    });
 
 //this checks if the password is not modified it will not rehashed
-UserSchema.pre('save', async function(next){
-    if(!this.isModified('password')){
+UserSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) {
         next();
     }
     const salt = await bcrypt.genSalt(10);
@@ -55,15 +60,15 @@ UserSchema.pre('save', async function(next){
 });
 
 //compare password if you are logging in
-UserSchema.methods.matchPasswords = async function(password){
+UserSchema.methods.matchPasswords = async function (password) {
     return await bcrypt.compare(password, this.password);
 }
 
-UserSchema.methods.getSignedToken = function(){
-    return jwt.sign({id: this._id}, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE});
+UserSchema.methods.getSignedToken = function () {
+    return jwt.sign({ id: this._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
 }
 
-UserSchema.methods.getResetPasswordToken = function(){
+UserSchema.methods.getResetPasswordToken = function () {
     const resetToken = crypto.randomBytes(20).toString("hex");
 
     this.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
