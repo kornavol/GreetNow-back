@@ -23,10 +23,10 @@ exports.newRecord = async (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-    const tocken = req.query.user;
-    // console.log(tocken);
+    const userId = req.query.userid;
+    console.log(userId);
 
-    User.findById("61111dbbcaed1572881e545a", (err, doc) => {
+    User.findById(userId, (err, doc) => {
         if (err) {
             res.status(500).send({ status: "failed", message: err });
         } else {
