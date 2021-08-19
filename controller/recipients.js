@@ -1,8 +1,9 @@
 const User = require("../model/User");
 
 exports.newRecord = async (req, res) => {
+    const userId = req.query.userid;
     const recipient = req.body;
-    const user = await User.findById("61111dbbcaed1572881e545a");
+    const user = await User.findById(userId);
 
     user.recipients.unshift(recipient);
 
@@ -24,7 +25,6 @@ exports.newRecord = async (req, res) => {
 
 exports.getAll = (req, res) => {
     const userId = req.query.userid;
-    console.log(userId);
 
     User.findById(userId, (err, doc) => {
         if (err) {
