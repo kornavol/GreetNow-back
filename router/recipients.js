@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const recipientsControl = require("../controller/recipients");
-const {tokenDecription} = require("../middleware/tokenDec");
+const { tokenDecription } = require("../middleware/tokenDec");
 
 router.get("/getAll", tokenDecription, recipientsControl.getAll);
 router.post("/new_record", tokenDecription, recipientsControl.newRecord);

@@ -2,14 +2,14 @@ const express = require("express");
 const app = express();
 const path = require("path");
 
-require("dotenv").config({path : "./config.env"});
+require("dotenv").config({ path: "./config.env" });
 
 const idToDb = require("./config/id-name");
 const connectDB = require("./config/db");
 
 const catalog = require("./router/catalog");
 const cards = require("./router/cards");
-const data = require('./router/initialData')
+const data = require("./router/initialData");
 
 const errorHandler = require("./middleware/error");
 
@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
 /* CrossDomain setup */
-let allowCrossDomain = function(req, res, next) {
+let allowCrossDomain = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "*");
   res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
@@ -37,10 +37,12 @@ let allowCrossDomain = function(req, res, next) {
     1. Ask Buelent about  situation, with promise
     2. Ask about my initial idea. Get conformity table once and send it to
     midleware. */
-idToDb.convertIds("events").then((respond) =>
-                                     (app.locals.eventsLookupTab = respond));
-idToDb.convertIds("categories")
-    .then((respond) => (app.locals.categoriesLookupTab = respond));
+idToDb
+  .convertIds("events")
+  .then((respond) => (app.locals.eventsLookupTab = respond));
+idToDb
+  .convertIds("categories")
+  .then((respond) => (app.locals.categoriesLookupTab = respond));
 
 app.use(allowCrossDomain);
 
@@ -49,7 +51,7 @@ app.use("/auth", require("./router/auth"));
 app.use("/private", require("./router/private"));
 app.use("/cards", cards);
 app.use("/data", data);
-app.use("/recipients", require("./router/recipients"))
+app.use("/recipients", require("./router/recipients"));
 
 // error handler should be last piece of middleware
 app.use(errorHandler);
