@@ -26,9 +26,6 @@ exports.newRecord = (req, res) => {
         const recipient = req.body;
         const user = await User.findById(userId);
 
-        // console.log('userId', userId);
-        console.log('recipient', recipient);
-
         user.recipients.unshift(recipient);
 
         const currRecipient = user.recipients[0];
@@ -77,19 +74,15 @@ exports.updateRecord = async (req, res) => {
 
         const user = await User.findById(userId);
 
-
         const index = user.recipients.findIndex(
             (element) => element._id == recipId
         );
-
-        console.log(index);
 
         const oldRecipient = user.recipients[index]
 
         newRecipient._id = oldRecipient._id
 
         if (index || index === 0 ) {
-            console.log(index);
             user.recipients[index] = newRecipient;
         }
 
@@ -114,10 +107,7 @@ exports.updateRecord = async (req, res) => {
 exports.deleteRecord = async (req, res) => {
     const userId = req.query.userid;
     const id = req.body._id
-
-    console.log(id)
     const user = await User.findById(userId);
-    console.log(user.recipients);
 
     user.recipients.id(id).remove()
 

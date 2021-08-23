@@ -26,8 +26,6 @@ exports.convertIds = (req, res, next) => {
             const name = lookUpTab[id];
 
             if (name == input) {
-                // console.log('name:',name);
-                // console.log('input:',input);
                 let result = id;
                 req.query[collection] = result;
                 break

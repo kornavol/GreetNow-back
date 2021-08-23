@@ -31,16 +31,11 @@ exports.getAll = async (req, res) => {
     const pass = { events: { _id: eventId }, categories: { _id: categoryId } };
     find = texts.find(pass);
     numOfDocs = await texts.countDocuments(pass).exec();
-    // console.log('both');
   } else if (eventId && !categoryId) {
     const pass = { events: { _id: eventId } };
     find = texts.find(pass);
     numOfDocs = await texts.countDocuments(pass).exec();
-    // console.log('event');
-    // console.log(eventId)
   } else if (!eventId && categoryId) {
-    // console.log("category");
-    // console.log(categoryId)
     const pass = { categories: { _id: categoryId } };
     find = texts.find(pass);
     numOfDocs = await texts.countDocuments(pass).exec();
