@@ -13,8 +13,6 @@ const data = require('./router/initialData')
 
 const errorHandler = require("./middleware/error");
 
-// const test1 = require('./middleware/conformity')
-
 const port = process.env.PORT || 8080;
 
 connectDB();
@@ -33,10 +31,6 @@ let allowCrossDomain = function (req, res, next) {
   next();
 };
 
-/* !Q:
-    1. Ask Buelent about  situation, with promise
-    2. Ask about my initial idea. Get conformity table once and send it to
-    midleware. */
 idToDb
   .convertIds("events")
   .then((respond) => (app.locals.eventsLookupTab = respond));
@@ -55,8 +49,5 @@ app.use("/recipients", require("./router/recipients") )
 
 // error handler should be last piece of middleware
 app.use(errorHandler);
-
-/* Andreas things */
-// idToDb.convertIds()
 
 app.listen(port, () => console.log(`Server started to run on ${port}`));
