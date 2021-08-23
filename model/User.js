@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const recipientShema = new mongoose.Schema({
     firstName: String,
     lastName: String,
-    dateOfBbirth: String,
+    dateOfBirth: String,
     gender: String,
     relationships: Array,
     events: Array,

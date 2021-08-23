@@ -1,26 +1,51 @@
+const multer = require('multer');
+
 const User = require("../model/User");
 
-exports.newRecord = async (req, res) => {
-    const userId = req.query.userid;
-    const recipient = req.body;
-    const user = await User.findById(userId);
+/* ... multer settings goes here */
 
-    user.recipients.unshift(recipient);
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/avatars')
+    },
+    filename: function (req, file, cb) {
+        cb(null, 'a' + Date.now() + path.extname(file.originalname))
+    }
+});
 
-    const currRecipient = user.recipients[0];
+const upload = multer({ storage: storage }).single('file');
 
-    await user.save((err, doc) => {
+
+exports.newRecord = (req, res) => {
+    upload(req, res, async (err) => {
         if (err) {
-            console.log(err);
-            res.send({ status: "failed", message: err });
-        } else {
-            res.send({
-                status: "success",
-                message: "Contact created successfully",
-                data: currRecipient,
-            });
+            console.log('err', err);
         }
-    });
+
+        const userId = req.query.userid;
+        const recipient = req.body;
+        const user = await User.findById(userId);
+
+        // console.log('userId', userId);
+        console.log('recipient', recipient);
+
+        user.recipients.unshift(recipient);
+
+        const currRecipient = user.recipients[0];
+
+        await user.save((err, doc) => {
+            if (err) {
+                console.log(err);
+                res.send({ status: "failed", message: err });
+            } else {
+                res.send({
+                    status: "success",
+                    message: "Contact created successfully",
+                    data: currRecipient,
+                });
+            }
+        });
+    })
 };
 
 exports.getAll = (req, res) => {
@@ -41,44 +66,57 @@ exports.getAll = (req, res) => {
 };
 
 exports.updateRecord = async (req, res) => {
-    const newRecipient = req.body;
-    const user = await User.findById("61111dbbcaed1572881e545a");
-    
-
-    const index = user.recipients.findIndex(
-        (element) => element._id == "611a834a9910fb516851121c"
-    );
-    
-    const oldRecipient = user.recipients[index]
-
-    newRecipient._id = oldRecipient._id
-
-    if (index) {
-        console.log(index);
-        user.recipients[index] = newRecipient;
-    }
-
-    await user.save((err, doc) => {
+    upload(req, res, async (err) => {
         if (err) {
-            console.log(err);
-            res.send({ status: "failed", message: err });
-        } else {
-            res.send({
-                status: "success",
-                message: "Contact updated successfully",
-                data: {
-                    newRecipient,
-                    oldRecipient,
-                },
-            });
+            console.log('err', err);
         }
+
+        const userId = req.query.userid;
+        const newRecipient = req.body;
+        const recipId = req.body._id
+
+        const user = await User.findById(userId);
+
+
+        const index = user.recipients.findIndex(
+            (element) => element._id == recipId
+        );
+
+        console.log(index);
+
+        const oldRecipient = user.recipients[index]
+
+        newRecipient._id = oldRecipient._id
+
+        if (index || index === 0 ) {
+            console.log(index);
+            user.recipients[index] = newRecipient;
+        }
+
+        await user.save((err, doc) => {
+            if (err) {
+                console.log(err);
+                res.send({ status: "failed", message: err });
+            } else {
+                res.send({
+                    status: "success",
+                    message: "Contact updated successfully",
+                    data: {
+                        newRecipient,
+                        oldRecipient,
+                    },
+                });
+            }
+        });
     });
 };
 
 exports.deleteRecord = async (req, res) => {
+    const userId = req.query.userid;
     const id = req.body._id
+
     console.log(id)
-    const user = await User.findById("61111dbbcaed1572881e545a");
+    const user = await User.findById(userId);
     console.log(user.recipients);
 
     user.recipients.id(id).remove()
