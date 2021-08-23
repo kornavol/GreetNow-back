@@ -1,5 +1,4 @@
 const multer = require('multer');
-
 const User = require("../model/User");
 
 /* ... multer settings goes here */
