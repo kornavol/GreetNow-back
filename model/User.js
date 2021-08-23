@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+// const cards = require("./cards");
+
 const recipientShema = new mongoose.Schema({
     firstName: String,
     lastName: String,
@@ -13,6 +15,16 @@ const recipientShema = new mongoose.Schema({
     relationships: Array,
     events: Array,
 },
+{
+    timestamps: true
+})
+
+const cards = new mongoose.Schema({
+    text: String,
+    picture: String,
+    recipient: String,
+    event:String
+}, 
 {
     timestamps: true
 })
@@ -44,6 +56,7 @@ const UserSchema = new mongoose.Schema({
     resetPasswordToken: String,
     resetPasswordExpire: Date,
     recipients: [recipientShema],
+    cards:[cards]
 },
     {
         timestamps: true
