@@ -5,11 +5,14 @@ const path = require("path");
 require("dotenv").config({ path: "./config.env" });
 
 const idToDb = require("./config/id-name");
+const assistant = require("./config/assistent")
+
 const connectDB = require("./config/db");
 
 const catalog = require("./router/catalog");
 const cards = require("./router/cards");
 const data = require('./router/initialData')
+
 
 const errorHandler = require("./middleware/error");
 
@@ -37,6 +40,9 @@ idToDb
 idToDb
   .convertIds("categories")
   .then((respond) => (app.locals.categoriesLookupTab = respond));
+
+/* Card assistant */
+assistant.cardAssistant(1)
 
 app.use(allowCrossDomain);
 
