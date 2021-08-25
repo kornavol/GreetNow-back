@@ -1,6 +1,9 @@
 const dates = require("../model/dates");
 
 exports.cardAssistant = async (validPer) => {
+
+    /* CREATING CURRENT DATE AND TIME POINT*/
+
     /* Create current date (day) */
     const ts = Date.now();
     const date = new Date(ts);
@@ -21,11 +24,12 @@ exports.cardAssistant = async (validPer) => {
 
     const createTimePoint = (period) => {
         /* Validation period. How many days to check the event. 
-                        Conver days to ms days */
+        Conver days to ms days */
 
         /* The data is object which loolks like can't be clone. 
-                    It's a reason why I define a new date below */
+        It's a reason why I define a new date below */
         const newDate = new Date(ts);
+        /* increasing the date by a certain period */
         newDate.setDate(newDate.getDate() + period);
 
         const timePoint = dataConvertor(newDate);
@@ -41,16 +45,14 @@ exports.cardAssistant = async (validPer) => {
     /* CHECKING IF WE USE ASSISTENT FUNCTION TODAY */
 
     const repeatChecker = async () => {
-
         const record = await dates.findOne({ date: currDate });
 
         // console.log('record', record);
 
-        let needContinue = false
+        let needContinue = false;
 
         /* Checking if we have doc. with this record. 
         If we don't have create new record  */
-
         if (!record) {
             const doc = new dates({
                 date: currDate,
@@ -65,34 +67,31 @@ exports.cardAssistant = async (validPer) => {
                 }
             });
 
-            needContinue = true
+            needContinue = true;
             /* cheking if main function was complited 
             and change a status regarding to result */
         } else if (record.checked === false) {
-            needContinue = true
+            needContinue = true;
         } else if (record.checked === true) {
-            needContinue = false
+            needContinue = false;
         }
 
-        return needContinue
-
+        return needContinue;
     };
 
-    const permision = await repeatChecker()
+    const permision = await repeatChecker();
 
-    console.log('can continue:', permision);
+    console.log("can continue:", permision);
 
     /* cheking if main function was complited. 
-    If yes om this point function will be stop */
+      If yes on this point function will be stop */
     if (!permision) {
-        /* Need return some message */
-        return
+        /* Fo-DO. Need to return some message */
+        return;
     }
 
+    /* COMPARISON OF DATE OF RECIPIENTS EVENTS OF USER */
 
 
-
-    
-
-    /* the end bracket */
+/* the end bracket */
 };
