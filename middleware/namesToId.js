@@ -1,11 +1,16 @@
 exports.convertIds = (req, res, next) => {
     /* Cheking if we have requst with filters */
     let isFiltred = false;
-    const event = req.query.event;
-    const category = req.query.category;
+    let event = req.query.event;
+    let category = req.query.category;
 
-    if (event || category) {
+
+    if (event) {
         isFiltred = true;
+        event = event.toLowerCase();
+    } else if (category) {
+        isFiltred = true;
+        category.toLowerCase();
     }
 
     function findId(collection) {
