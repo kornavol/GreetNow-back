@@ -1,7 +1,7 @@
 const mongoEvents = require("../model/events");
 const mongoCategories = require("../model/categories");
 
-exports.convertIds = async (db, name) => {
+exports.convertIds = async (db) => {
 
     let sorce;
 

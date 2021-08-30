@@ -51,7 +51,23 @@ exports.getAll = (req, res) => {
         if (err) {
             res.status(500).send({ status: "failed", message: err });
         } else {
-            const recipients = doc.recipients;
+            const recipientsDB = [...doc.recipients];
+
+            const recipients = recipientsDB.map(recip => {
+
+                let dateOfBirth = recip.dateOfBirth
+
+                const day = dateOfBirth.getDate();
+                const month = dateOfBirth.getMonth();
+                const year = dateOfBirth.getFullYear();
+
+                /* saving date in DD-MM-YYYY format */
+                recip.dateOfBirth = day + "-" + month + "-" + year;
+
+                return recip
+
+            })
+
             res.send({
                 status: "success",
                 message: "All data fetched successfully",
@@ -81,7 +97,7 @@ exports.updateRecord = async (req, res) => {
 
         newRecipient._id = oldRecipient._id
 
-        if (index || index === 0 ) {
+        if (index || index === 0) {
             user.recipients[index] = newRecipient;
         }
 

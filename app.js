@@ -41,8 +41,12 @@ idToDb
   .convertIds("categories")
   .then((respond) => (app.locals.categoriesLookupTab = respond));
 
-/* Card assistant */
-assistant.cardAssistant(1)
+/* Card assistant. One now, one in one day  */
+assistant.cardAssistant(5)
+setInterval(() => {
+  assistant.cardAssistant(5)  
+}, 86400000);
+
 
 app.use(allowCrossDomain);
 

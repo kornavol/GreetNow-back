@@ -1,12 +1,19 @@
 exports.convertIds = (req, res, next) => {
     /* Cheking if we have requst with filters */
     let isFiltred = false;
-    const event = req.query.event;
-    const category = req.query.category;
+    let event = req.query.event;
+    let category = req.query.category;
 
-    if (event || category) {
+
+    if (event) {
         isFiltred = true;
+        event = event.toLowerCase();
+    } else if (category) {
+        isFiltred = true;
+        category.toLowerCase();
     }
+
+    
 
     function findId(collection) {
         let lookUpTab = null;
@@ -21,6 +28,8 @@ exports.convertIds = (req, res, next) => {
             lookUpTab = req.app.locals.eventsLookupTab;
             input = event;
         }
+
+        console.log('lookUpTab:', lookUpTab);
 
         for (const id in lookUpTab) {
             const name = lookUpTab[id];
@@ -40,6 +49,10 @@ exports.convertIds = (req, res, next) => {
     if (category) {
         findId("category");
     }
+
+    console.log('event:', event);
+    
+    console.log('req:', req.query.event );
 
     req.query.isFiltred = isFiltred;
     next();

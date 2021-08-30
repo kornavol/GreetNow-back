@@ -10,20 +10,24 @@ const jwt = require('jsonwebtoken');
 const recipientShema = new mongoose.Schema({
     firstName: String,
     lastName: String,
-    dateOfBirth: String,
+    dateOfBirth: Date,
     gender: String,
     relationships: Array,
     events: Array,
+    newCards: Number,
+    autoCards: Object,
+    // test:Date
 },
 {
     timestamps: true
 })
 
-const cards = new mongoose.Schema({
+const cardShema = new mongoose.Schema({
     text: String,
     picture: String,
     recipient: String,
-    event:String
+    event:String,
+    createdBy: String
 }, 
 {
     timestamps: true
@@ -56,7 +60,7 @@ const UserSchema = new mongoose.Schema({
     resetPasswordToken: String,
     resetPasswordExpire: Date,
     recipients: [recipientShema],
-    cards:[cards]
+    cards:[cardShema]
 },
     {
         timestamps: true
