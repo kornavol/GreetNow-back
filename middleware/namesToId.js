@@ -13,6 +13,8 @@ exports.convertIds = (req, res, next) => {
         category.toLowerCase();
     }
 
+    
+
     function findId(collection) {
         let lookUpTab = null;
         let input = null;
@@ -26,6 +28,8 @@ exports.convertIds = (req, res, next) => {
             lookUpTab = req.app.locals.eventsLookupTab;
             input = event;
         }
+
+        console.log('lookUpTab:', lookUpTab);
 
         for (const id in lookUpTab) {
             const name = lookUpTab[id];
@@ -45,6 +49,10 @@ exports.convertIds = (req, res, next) => {
     if (category) {
         findId("category");
     }
+
+    console.log('event:', event);
+    
+    console.log('req:', req.query.event );
 
     req.query.isFiltred = isFiltred;
     next();
