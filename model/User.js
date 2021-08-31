@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 
 // const cards = require("./cards");
 
-const autoCardsShema = new moongose.Schema({
+const autoCardsShema = new mongoose.Schema({
     event:String
 })
 
