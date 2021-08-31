@@ -5,7 +5,7 @@ exports.getCard = (req, res) => {
     const cardId = req.query.id;
 
     // console.log(userId);
-    console.log(cardId);
+    // console.log(cardId);
 
     /* mongoose query if needs to find some record of object into array*/
     User.find({ "cards._id": cardId }, (err, doc) => {
@@ -31,31 +31,6 @@ exports.getCard = (req, res) => {
             }
         }
     })
-
-
-    // User.findById(userId, (err, doc) => {
-    //     if (err) {
-    //         res.status(500).send({ status: "failed", message: err });
-    //     } else {
-    //         const cards = doc.cards;
-    //         const card = cards.find(card => card._id == cardId)
-
-    //         if (card) {
-    //             res.send({
-    //                 status: "success",
-    //                 message: "All data fetched successfully",
-    //                 data: card,
-    //             });    
-    //         } else {
-    //             res.send({
-    //                 status: "failed",
-    //                 message: `Card with id: ${cardId} not exist`,
-    //                 data: card,
-    //             });
-    //         }
-
-    //     }
-    // });
 };
 
 
@@ -81,9 +56,6 @@ exports.newRecord = async (req, res) => {
     const userId = req.query.userid;
     const card = req.body;
     const user = await User.findById(userId);
-
-    console.log(userId);
-    console.log(card);
 
     user.cards.unshift(card);
 

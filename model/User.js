@@ -7,6 +7,10 @@ const jwt = require('jsonwebtoken');
 
 // const cards = require("./cards");
 
+const autoCardsShema = new moongose.Schema({
+    event:String
+})
+
 const recipientShema = new mongoose.Schema({
     firstName: String,
     lastName: String,
@@ -15,7 +19,7 @@ const recipientShema = new mongoose.Schema({
     relationships: Array,
     events: Array,
     newCards: Number,
-    autoCards: Object,
+    autoCards: {autoCardsShema},
     // test:Date
 },
 {

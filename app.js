@@ -42,7 +42,7 @@ idToDb
   .then((respond) => (app.locals.categoriesLookupTab = respond));
 
 /* Card assistant. One now, one in one day  */
-assistant.cardAssistant(5)
+assistant.cardAssistant(10) //150
 setInterval(() => {
   assistant.cardAssistant(5)  
 }, 86400000);

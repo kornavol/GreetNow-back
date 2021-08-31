@@ -1,67 +1,38 @@
 const dates = require("../model/dates");
-
 const Users = require("../model/User");
 const Events = require("../model/events");
 
 const createRandomeCard = require("./func/rendomCard");
 
+/* Validation period. How many days to check the event.*/
 exports.cardAssistant = async (validPer) => {
-    /* CREATING CURRENT DATE AND TIME POINT*/
+    /* 1. CREATING CURRENT DATE AND TIME POINT*/
 
     /* Create current date (day) */
-    // const ts = Date.now();
     const date = new Date();
-    date.setHours(0);
-    
+    /* Probably. we need to put '2' as difference between timezones */
+    date.setHours(2, 0, 0, 0);
+
     // console.log('date', date);
 
-    const dataConvertor = (date) => {
-        const day = date.getDate();
-        const month = date.getMonth() + 1;
-        const year = date.getFullYear();
-
-        /* saving date in YYYY-MM-DD format */
-        return year + "-" + month + "-" + day;
-    };
-
-    const dataConvertor2 = (date) => {
-        const day = date.getDate();
-        const month = date.getMonth() * 30;
-
-        /* saving date in YYYY-MM-DD format */
-        return month + day;
-    };
-
-    // const currDate = dataConvertor(date);
     const currDate = date
     console.log("current date:", date);
 
-    const createTimePoint = (period) => {
-        /* Validation period. How many days to check the event. 
-        Conver days to ms days */
 
-        /* The data is object which loolks like can't be clone. 
+    function createTimePoint(period) {
+        /* The data is a special object which loolks like can't be cloned. 
         It's a reason why I define a new date below */
         const newDate = new Date();
         /* increasing the date by a certain period */
         newDate.setDate(newDate.getDate() + period);
 
-        // const timePoint = dataConvertor(newDate);
-
-        // console.log('date', date);
-        // console.log('newDate', newDate);
-
-        // const test = newDate > date
-        // console.log('test', test);
-
-        // return timePoint;
         return newDate;
     };
 
     let timePoint = createTimePoint(validPer);
     console.log("timePoint:", timePoint);
 
-    /* CHECKING IF WE USE ASSISTENT FUNCTION TODAY */
+    /* 2. CHECKING IF WE USE ASSISTENT FUNCTION TODAY */
 
     async function repeatChecker() {
         const record = await dates.findOne({ date: currDate });
@@ -103,18 +74,16 @@ exports.cardAssistant = async (validPer) => {
     console.log("Do we need to create cards automatically today?:", permision);
 
     /* cheking if main function was complited. 
-    If yes on this point function will be stop */
+    If yes on this point function will be stoped */
     if (!permision) {
-        /* Fo-DO. Need to return some message */
+        /* o-DO. Need to return some message */
         return;
     }
 
-    /* COMPARISON OF DATE OF RECIPIENTS EVENTS OF USER */
-    /* Counter for how much cards was created */
-    let createdCard = 0;
+    /* 3. COMPARISON OF DATE OF RECIPIENTS EVENTS OF USER */
 
     /* Creating a events table */
-    async function CreateEventsList() {
+    async function createEventsList() {
         const events = await Events.find({}).exec();
         // console.log('evetns', evetns);
 
@@ -122,33 +91,26 @@ exports.cardAssistant = async (validPer) => {
 
         events.forEach((event) => {
             /* !!Bug */
-            // console.log(11, event.public);
+            // console.log(11, event.date);
             // if (event.public) {
             if (event.name !== "Birthday" && event.name !== "Wedding") {
                 /* difference of writting */
                 const name = event.name.toLowerCase();
-
-                const day = event.day;
-                const month = event.month;
-
-                const data = `2021-${month}-${day}`;
-
-                list[name] = data;
+                list[name] = event.date;
             }
         });
 
         return list;
     }
 
-    const eventsList = await CreateEventsList();
+    const eventsList = await createEventsList();
     // console.log("eventsList", eventsList);
 
     /* Creation a collection if all recipients */
     const allUsers = await Users.find({});
     // console.log('allUsers', allUsers);
 
-    allUsers.forEach((user) => {
-        /* users id HERE */
+    allUsers.forEach(async (user) => {
         // console.log('recip', recip.id)
 
         // console.log('recip', recip.recipients)
@@ -157,7 +119,7 @@ exports.cardAssistant = async (validPer) => {
         if (currUserRecip.length > 0) {
             // console.log('name', events.events);
 
-            currUserRecip.forEach((recipient) => {
+            currUserRecip.forEach(async (recipient, index) => {
                 const events = recipient.events;
                 const relationships = recipient.relationships;
                 const resID = recipient._id;
@@ -165,25 +127,35 @@ exports.cardAssistant = async (validPer) => {
 
                 /* Cheking public events */
                 const valEvents = events.filter((event) => {
-                    /* data validation of public event: */
                     // console.log('event time',eventsList[event])
 
                     if (timePoint >= eventsList[event]) {
-                        return event;
+                        const diff = Math.floor((timePoint - recipient.dateOfBirth) / 86400000)
+
+                        /* To prevent notification about to far events */
+                        if (diff <= validPer) {
+                            return event;
+                        }
                     }
 
-                    /* of birthday. TO:DO: change logic to all private events */
+                    /* for birthday. TO:DO: change logic to all private events */
                     if (event == "birthday") {
-                        const a = dataConvertor2(recipient.dateOfBirth)
-                        const b = dataConvertor2(timePoint)
+                        /* assign birthday data a current year, for comparison with timepoint */
+                        const dateOfBirth = recipient.dateOfBirth
+                        dateOfBirth.setFullYear(2021)
 
-                        // console.log('a and b: ', a, b);
+                        // console.log('dateOfBirth:', dateOfBirth)
 
-                        if (b >= a) {
+                        if (timePoint >= dateOfBirth) {
+                            const diff = Math.floor((timePoint - recipient.dateOfBirth) / 86400000)
 
-                            console.log(recipient.dateOfBirth);
-                            return event;
+                            /* To prevent notification about to far events */
+                            if (diff <= validPer) {
+                                return event;
+                            }
 
+                            // console.log('>=',recipient.dateOfBirth, timePoint);
+                            // console.log('=',diff);
                         }
                     }
                 });
@@ -191,9 +163,11 @@ exports.cardAssistant = async (validPer) => {
                 /* CREATE CARD AND SAVE ALL CHANGES TO DB.
                 MARK DAY AS FINISHED*/
                 if (valEvents.length > 0) {
-                    valEvents.forEach(async (event) => {
+                    await valEvents.forEach(async (event, i) => {
                         // console.log('event', event);
+                        
 
+                        /* Controler to prevent creating card for validated event again*/
                         if (!recipient.autoCards) {
                             recipient.autoCards = {};
                         }
@@ -203,10 +177,10 @@ exports.cardAssistant = async (validPer) => {
                         }
 
                         if (recipient.autoCards[event] === false) {
-                            recipient.autoCards[event] = false;
+                            /* Controler to prevent creating card for validated event again*/
+                            
                             const card = await createRandomeCard(event, relationships, resID);
-                            createdCard++;
-
+                            
                             /* add a numbers of card mark to current reciient  */
                             // console.log('recipient', recipient);
                             if (!recipient.newCards) {
@@ -221,27 +195,50 @@ exports.cardAssistant = async (validPer) => {
 
                             /* save card to current user */
                             if (card) {
+                                // console.log('before', recipient.autoCards );
+                                recipient.autoCards[event] = true;
+                                
+                                // console.log('after', recipient.autoCards );
                                 user.cards.unshift(card);
+                                // console.log(`Created card: 
+                                //     event:${event}
+                                //     user: ${user._id}
+                                //     recipient: ${recipient.firstName} `);
                             }
 
                             /* We need define user again befor saving again and save this user. It's neccessery!!! 
-                                          P.S. Looks like not  */
+                            P.S. Looks like not  */
                             // const currUser = await Users.findById(user._id);
+
+                        }
+
+                        /* Checking the cycle for the last rount of receipient en event
+                        TO-Do: update all forEach to for of 
+                        */
+                        if (index == currUserRecip.length - 1 && i == valEvents.length - 1) {
+                             console.log('autoCards:', recipient.autoCards);
                             await user.save((err, doc) => {
                                 if (err) {
                                     console.log(err);
                                 } else {
-                                    console.log(`Card was created and saved.
-                                For user: ${doc._id};
-                                Event: ${event}`);
+                                    console.log(111, doc);
                                 }
                             });
                         }
                     });
-                    // console.log('autoCards: ', recipient.autoCards);
                 }
+                
             });
         }
+        /*this save to update sync. results  f.e. autoCards */
+        // await user.save((err, doc) => {
+        //     if (err) {
+        //         console.log(err);
+        //     } else {
+        //         // console.log(111, doc);
+        //     }
+        // });
+
     });
 
     /* UPDATE DATA CHECKER */
@@ -250,5 +247,4 @@ exports.cardAssistant = async (validPer) => {
     //     { createdCard, checked: true }
     // );
 
-    console.log("createdCard", createdCard);
 };

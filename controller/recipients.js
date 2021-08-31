@@ -51,23 +51,7 @@ exports.getAll = (req, res) => {
         if (err) {
             res.status(500).send({ status: "failed", message: err });
         } else {
-            const recipientsDB = [...doc.recipients];
-
-            const recipients = recipientsDB.map(recip => {
-
-                let dateOfBirth = recip.dateOfBirth
-
-                const day = dateOfBirth.getDate();
-                const month = dateOfBirth.getMonth();
-                const year = dateOfBirth.getFullYear();
-
-                /* saving date in DD-MM-YYYY format */
-                recip.dateOfBirth = day + "-" + month + "-" + year;
-
-                return recip
-
-            })
-
+            const recipients = doc.recipients
             res.send({
                 status: "success",
                 message: "All data fetched successfully",
@@ -96,6 +80,8 @@ exports.updateRecord = async (req, res) => {
         const oldRecipient = user.recipients[index]
 
         newRecipient._id = oldRecipient._id
+        /* Becouse I don't now how appent an object */
+        newRecipient.autoCards = oldRecipient.autoCards
 
         if (index || index === 0) {
             user.recipients[index] = newRecipient;

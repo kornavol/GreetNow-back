@@ -6,7 +6,9 @@ const eventsSchema = new mongoose.Schema(
         _id: mongoose.Schema.Types.ObjectId,
         name: String,
         day:Number,
-        month:Number
+        month:Number,
+        date:Date,
+
 
     }
 )
