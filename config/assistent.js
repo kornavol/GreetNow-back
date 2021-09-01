@@ -110,7 +110,7 @@ exports.cardAssistant = async (validPer) => {
     const allUsers = await Users.find({});
     // console.log('allUsers', allUsers);
 
-    allUsers.forEach(async (user) => {
+    allUsers.forEach((user) => {
         // console.log('recip', recip.id)
 
         // console.log('recip', recip.recipients)
@@ -120,6 +120,9 @@ exports.cardAssistant = async (validPer) => {
             // console.log('name', events.events);
 
             currUserRecip.forEach(async (recipient, index) => {
+
+                // recipient = recipient.toObject();
+
                 const events = recipient.events;
                 const relationships = recipient.relationships;
                 const resID = recipient._id;
@@ -165,82 +168,62 @@ exports.cardAssistant = async (validPer) => {
                 if (valEvents.length > 0) {
                     await valEvents.forEach(async (event, i) => {
                         // console.log('event', event);
-                        
 
                         /* Controler to prevent creating card for validated event again*/
-                        if (!recipient.autoCards) {
-                            recipient.autoCards = {};
+                        const autoCards = recipient.autoCards
+                        if (!autoCards) {
+                            autoCards = [];
                         }
 
-                        if (recipient.autoCards[event] === undefined) {
-                            recipient.autoCards[event] = false;
-                        }
+                        const isExist = autoCards.find(el => el == event)
 
-                        if (recipient.autoCards[event] === false) {
-                            /* Controler to prevent creating card for validated event again*/
-                            
+                        if (!isExist) {
                             const card = await createRandomeCard(event, relationships, resID);
-                            
-                            /* add a numbers of card mark to current reciient  */
-                            // console.log('recipient', recipient);
-                            if (!recipient.newCards) {
-                                recipient.newCards = 1;
-                            } else {
-                                if (typeof recipient.newCards == "number") {
-                                    recipient.newCards++;
-                                } else {
-                                    recipient.newCards = 1;
-                                }
-                            }
 
                             /* save card to current user */
                             if (card) {
-                                // console.log('before', recipient.autoCards );
-                                recipient.autoCards[event] = true;
-                                
-                                // console.log('after', recipient.autoCards );
+                                /* Controler to prevent creating card for validated event again*/
+                                autoCards.push(event)
+
                                 user.cards.unshift(card);
-                                // console.log(`Created card: 
-                                //     event:${event}
-                                //     user: ${user._id}
-                                //     recipient: ${recipient.firstName} `);
+                                console.log(`Created card: 
+                                    event:${event}
+                                    user: ${user._id}
+                                    recipient: ${recipient.firstName} `);
+
+                                /* add a numbers of card mark to current reciient  */
+                                if (!recipient.newCards) {
+                                    recipient.newCards = 1;
+                                } else {
+                                    if (typeof recipient.newCards == "number") {
+                                        recipient.newCards++;
+                                    } else {
+                                        recipient.newCards = 1;
+                                    }
+                                }
                             }
-
-                            /* We need define user again befor saving again and save this user. It's neccessery!!! 
-                            P.S. Looks like not  */
-                            // const currUser = await Users.findById(user._id);
-
                         }
 
                         /* Checking the cycle for the last rount of receipient en event
                         TO-Do: update all forEach to for of 
                         */
-                        if (index == currUserRecip.length - 1 && i == valEvents.length - 1) {
-                             console.log('autoCards:', recipient.autoCards);
+                        
+                        // if (index == currUserRecip.length - 1 && i == valEvents.length - 1) {
+                        if (i == valEvents.length - 1) {
+
                             await user.save((err, doc) => {
                                 if (err) {
                                     console.log(err);
                                 } else {
-                                    console.log(111, doc);
+                                    // console.log(111, doc);
                                 }
                             });
                         }
                     });
                 }
-                
             });
         }
-        /*this save to update sync. results  f.e. autoCards */
-        // await user.save((err, doc) => {
-        //     if (err) {
-        //         console.log(err);
-        //     } else {
-        //         // console.log(111, doc);
-        //     }
-        // });
-
     });
-
     /* UPDATE DATA CHECKER */
     // await dates.findOneAndUpdate(
     //     { date: currDate },
