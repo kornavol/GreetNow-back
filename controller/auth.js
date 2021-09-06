@@ -72,7 +72,7 @@ exports.forgotPassword = async (req, res, next) => {
 
         await user.save();
 
-        const resetUrl = `${FRONT_ROUTE}passwordreset/${resetToken}`;
+        const resetUrl = `${process.env.FRONT_ROUTE}/passwordreset/${resetToken}`;
 
         const message = `
             <h1>You have requested a password reset</h1>
